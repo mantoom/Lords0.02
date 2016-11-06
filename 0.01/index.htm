@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<title>领主</title>
+	<link rel="stylesheet" href="css/base.css">
+	<link href="http://cdn.bootcss.com/uikit/2.27.1/css/uikit.min.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/uikit.min.js"></script>
+<!--       <link rel="stylesheet" href="css/uikit.min.css" />
+	<script src="js/jquery.min.js"></script>
+	<script src="js/uikit.min.js"></script> -->
+</head>
+<body>
+<div id="game" class="uk-grid">
+	<div class="uk-width-1-1">
+		<div class="uk-panel-box uk-container-center uk-panel-box-secondary">
+			<h1 class="uk-text-center" title="Lords">领主</h1>
+		</div>
+	</div>
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">领地信息</div>
+			<ul class="uk-list uk-list-line">
+				<li>领地：{{nickname}}</li>
+				<li>古罗马币：{{money | intercept2}}（每分钟收集{{moneyProduce | intercept2}}枚）</li>
+				<li>居民：{{peopleHave}}（{{peopleIdle}}人处于空闲）</li>
+			</ul>
+		</div>
+	</div>
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">建筑列表</div>
+			<table class="uk-table uk-table-striped">
+				<!-- <caption>介绍?</caption> -->
+				<thead>
+					<tr>
+						<th>建筑</th>
+						<th>成本</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+<!-- 				<tfoot>
+					<tr>
+						<td>页脚</td>
+					</tr>
+				</tfoot> -->
+				<tbody>
+					<tr v-for="list in buildList">
+						<td><button class="uk-button" value="{{list.id}}">{{list.name}}</button></td>
+						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
+						<td>{{list.nums}}</td>
+						<td><button class="uk-button" @click="plusBuilds(list.id)">建造</button><button class="uk-button" @click="reduceBuilds(list.id)">拆迁</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">消息框</div>
+			<div class="bor" v-for="list in commentList">
+				<div class="comment">{{list.comment}}</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">军队列表</div>
+			<table class="uk-table uk-table-striped">
+				<!-- <caption>介绍?</caption> -->
+				<thead>
+					<tr>
+						<th>军种</th>
+						<th>成本</th>
+						<th>伤害</th>
+						<th>护甲</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+<!-- 				<tfoot>
+					<tr>
+						<td>脚注</td>
+					</tr>
+				</tfoot> -->
+				<tbody>
+					<tr v-for="list in armyList">
+						<td><button class="uk-button" value="{{list.id}}">{{list.name}}</button></td>
+						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
+						<td>{{list.harm}}</td>
+						<td>{{list.armor}}</td>
+						<td>{{list.nums}}</td>
+						<td><button class="uk-button" @click="plusArmys(list.id)">训练</button><button class="uk-button" @click="reduceArmys(list.id)">遣散</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+	<!-- <script src="js/vue.js"></script> -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+	<script src="js/game.js"></script>
+</body>
+</html>

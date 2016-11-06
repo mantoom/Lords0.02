@@ -1,0 +1,16 @@
+/*.cc {
+    background-color: #1C3D68;
+    color: #BA1717;
+}*/
+
+.bor {
+	border-width: 1px;
+	border-color: #000000;
+}
+.comment {
+	color: #FFB24D;
+	padding: 4px;
+	margin-bottom: 2px;
+	height: 40px;
+	background: #167A8F;
+}
