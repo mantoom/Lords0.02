@@ -44,6 +44,32 @@ var alert = (function() {
 	};
 })();
 
+var dom = (function() {
+	var html = function(dom, content) {
+		$("#" + dom).html(content);
+	};
+
+	var text = function(dom, content) {
+		$("#" + dom).text(content);
+	};
+
+	var textPoint = function(dom, content, point = 2) {
+		var content2 = Number(content).toFixed(point);
+		$("#" + dom).text(content2);
+	};
+
+	// var textPercent = function(dom, content, point = 2) {
+	// 	var content2 = Number(content).toFixed('2');
+	// 	$("#" + dom).text(content2);
+	// };
+
+	return {
+		html : html,
+		text : text,
+		textPoint : textPoint,
+	};
+})();
+
 /* 游戏变量 */
 var initBuild = 2;
 var initArmy = 2;
@@ -52,30 +78,33 @@ var initBandit = 3;
 if (localStorage.nickname) {
 	var gd = {
 		introduces: '',
-		// 总督信息
 		ver: localStorage.ver,
+	// 总督信息
 		nickname: localStorage.nickname,
-		// 基地信息
+	// 基地信息
 		cityValue: localStorage.cityValue,
 		money: localStorage.money,
 		peopleHave: localStorage.peopleHave,
 		peopleIdle: localStorage.peopleIdle,
 		menace: localStorage.menace,
-		// 建筑信息
+	// 建筑信息
 		buildsList: [
-			{ id: 0, name: '练兵场', introduce: '增加人口上限', money: 100, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
+			{ id: 0, name: '练兵场', introduce: '训练军队的场地。', money: 275, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
+			{ id: 1, name: '农贸市场', introduce: '居民买卖粮食和生活必需品的场所，税收的重要来源。', money: 175, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
+			{ id: 2, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 175, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
 		],
-		// 军队信息
+	// 军队信息
 		armysList: [
 			{ id: 0, name: '民兵', introduce: 'Introduce', money: 50, worker: 1, harm: 7, armor: 50, nums: localStorage.army0 },
 			{ id: 1, name: '征召兵', introduce: 'Introduce', money: 125, worker: 1, harm: 11, armor: 80, nums: localStorage.army1 },
 		],
-		// 强盗信息
+	// 强盗信息
 		banditsList: [
 			{id: 0, name: '流氓', harm: 6, armor: 40, nums: localStorage.bandit0 },
 			{id: 1, name: '强盗', harm: 10, armor: 80, nums: localStorage.bandit1 },
 			{id: 2, name: '强盗头目', harm: 20, armor: 100, nums: localStorage.bandit2 },
 		],
+	// 信息流
 		commentId : {limit: 5, use: 0},
 		commentList: [
 			{comment: 'Welcome Lords!'},
@@ -160,6 +189,10 @@ var save = (function() {
 		for (var i in gd.banditsList) {
 			eval('localStorage.bandit' + i + ' = gd.banditsList[' + i + '].nums');
 		}
+
+		dom.text("nickname", gd.nickname);
+		dom.textPoint("money", gd.money);
+		
 		console.info('Save Success!');
 	};
 
@@ -334,6 +367,7 @@ var system = (function() {
 	// 介绍信息
 	var introduce = function(introduce) {
 		gd.introduces = introduce;
+		dom.text("nickname", gd.nickname);
 	};
 
 	return {
@@ -412,6 +446,7 @@ var manorActive = (function() {
 if (!localStorage.nickname) {
 	save.initGame();
 }
+save.saveGame()
 setInterval(function () {save.saveGame()}, 3000);
 
 /* _____________ */
