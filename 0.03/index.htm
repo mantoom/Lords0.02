@@ -2,28 +2,25 @@
 <html lang="zh">
 <head>
 	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit" >
 	<title>领主</title>
 	<link rel="stylesheet" href="css/base.css">
 	<link href="http://cdn.bootcss.com/uikit/2.27.1/css/uikit.min.css" rel="stylesheet">
-	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/uikit.min.js"></script>
-<!--       <link rel="stylesheet" href="css/uikit.min.css" />
-	<script src="js/jquery.min.js"></script>
-	<script src="js/uikit.min.js"></script> -->
+	<link href="http://cdn.bootcss.com/uikit/2.27.1/css/components/notify.css" rel="stylesheet">
 </head>
 <body>
 <div id="game" class="uk-grid" data-uk-margin>
 	<div id="introduces" class="uk-modal">
 		<div class="uk-modal-dialog">
 			<a class="uk-modal-close uk-close"></a>
-			{{{introduces}}}
+			<span id="introduces"></span>
 		</div>
 	</div>
 
 	<div class="uk-width-1-1">
 		<div class="uk-panel-box uk-container-center uk-panel-box-secondary">
 			<h1 class="uk-text-center" title="Lords">领主</h1>
-			<button class="uk-button" @click="updateSave()">存档更新</button>
+			<button class="uk-button" onclick="save.updateSave()">存档更新</button>
 		</div>
 	</div>
 
@@ -31,9 +28,9 @@
 		<div class="uk-panel uk-panel-box uk-panel-box-primary">
 			<div class="uk-panel-title">领地信息</div>
 			<ul class="uk-list uk-list-line">
-				<li>领地：{{nickname}}</li>
-				<li>古罗马币：{{money | intercept2}}（每秒收集{{moneyProduce | moneyProduce}}枚）</li>
-				<li>居民：{{peopleHave}}（{{peopleIdle}}人处于空闲）</li>
+				<li>领地：<span id="nickname"></span></li>
+				<li>古罗马币：<span id="money"></span>（每秒收集<span id="moneyProduce"></span>枚）</li>
+				<li>居民：<span id="peopleHave"></span>（<span id="peopleIdle"></span>人处于空闲）</li>
 			</ul>
 		</div>
 
@@ -46,14 +43,14 @@
 			<span class="uk-text-warning" v-if="menace=='complaint'">敌视</span>
 			<span class="uk-text-danger" v-if="menace=='enmity'">恨意</span>
 			<span class="uk-text-danger" v-if="menace=='hatred'">血仇</span>
-			<button class="uk-button uk-button-danger uk-float-right uk-margin-small-left" @click="surroundingSweep">扫荡</button>
-			<button class="uk-button uk-button-primary uk-float-right" @click="surroundingProbe">侦查</button>
+			<button class="uk-button uk-button-danger uk-float-right uk-margin-small-left" onclick="surroundingSweep()">扫荡</button>
+			<button class="uk-button uk-button-primary uk-float-right" onclick="bandit.surroundingProbe()">侦查</button>
 		</div>
 		
 		<div class="uk-panel uk-panel-box uk-panel-box-primary">
 			<div class="uk-panel-title">消息框</div>
 			<div class="bor" v-for="list in commentList">
-				<div class="comment">{{list.comment}}</div>
+				<div class="comment"><span id="comment"></span></div>
 			</div>
 		</div>
 	</div>
@@ -72,10 +69,10 @@
 				</thead>
 				<tbody>
 					<tr v-for="list in buildsList">
-						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" @click="introduce(list.introduce)">{{list.name}}</button></td>
-						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
-						<td>{{list.nums}}</td>
-						<td><button class="uk-button" @click="plusBuilds(list.id)">建造</button><button class="uk-button" @click="reduceBuilds(list.id)">拆迁</button></td>
+						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" onclick="introduce(list.introduce)"><span id="name"></span></button></td>
+						<td>￥<span id="money"></span> / 居民*<span id="worker"></span></td>
+						<td><span id="nums"></span></td>
+						<td><button class="uk-button" onclick="plusBuilds(list.id)">建造</button><button class="uk-button" onclick="reduceBuilds(list.id)">拆迁</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -96,12 +93,12 @@
 				</thead>
 				<tbody>
 					<tr v-for="list in armysList">
-						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" @click="introduce(list.introduce)">{{list.name}}</button></td>
-						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
-						<td>{{list.harm}}</td>
-						<td>{{list.armor}}</td>
-						<td>{{list.nums}}</td>
-						<td><button class="uk-button" @click="plusArmys(list.id)">训练</button><button class="uk-button" @click="reduceArmys(list.id)">遣散</button></td>
+						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" onclick="introduce(list.introduce)"><span id="name"></span></button></td>
+						<td>￥<span id="money"></span> / 居民*<span id="worker"></span></td>
+						<td><span id="harm"></span></td>
+						<td><span id="armor"></span></td>
+						<td><span id="nums"></span></td>
+						<td><button class="uk-button" onclick="plusArmys(list.id)">训练</button><button class="uk-button" onclick="reduceArmys(list.id)">遣散</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -109,8 +106,9 @@
 	</div>
 </div>
 
-	<!-- <script src="js/vue.js"></script> -->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/uikit.min.js"></script>
+	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/components/notify.js"></script>
 	<script src="js/game.js"></script>
 </body>
 </html>
