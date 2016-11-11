@@ -15,9 +15,11 @@ Vue.filter('moneyProduce', function (value) {
 	return Number(getMoney).toFixed('2')
 })
 
-var initBuild = 4;
+// var initBuild = 4;
+var initBuild = 2;
 var initArmy = 2;
 var initBandit = 3;
+var ver = '0.03(001)';
 
 if (localStorage.nickname) {
 	var gd = {
@@ -168,7 +170,7 @@ game = new Vue({
 		initGame: function() {
 			localStorage.clear();
 			localStorage.nickname = prompt("请输入昵称：");
-			localStorage.ver = '0.02v';
+			localStorage.ver = ver;
 			localStorage.cityValue = 0;
 			localStorage.money = 100;
 			localStorage.peopleHave = 0;
@@ -200,7 +202,7 @@ game = new Vue({
 				for (var i = initBandit - 1; i >= 0; i--) {
 					eval('localStorage.bandit' + i + ' = 0');
 				}
-				localStorage.ver = '0.02v';
+				localStorage.ver = ver;
 				window.location.reload();
 			} else {
 				this.alertInfo('您的存档已是最新版本');
@@ -261,33 +263,28 @@ game = new Vue({
 					}
 
 					for (var i = PartyA.length - 1; i >= 0; i--) {
-						// PartyA[i].nums = 0;
 						eval('gd.' + nameA + '[i].nums = 0');
 					}
 					for (var i = PartyB.length - 1; i >= 0; i--) {
-						// PartyB[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(PartyB[i].armor));
-						eval('gd.' + nameB + '[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(' + nameB + '[i].armor))');
+						eval('gd.' + nameB + '[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(gd.' + nameB + '[i].armor))');
 					}
 					return 'lost';
 				} else if (parseInt(armorB) < 1) {
 					if (parseInt(armorA) < 1) {
-						for (var i = PartyA.length - 1; i >= 0; i--) {
+						for (var i = PartyB.length - 1; i >= 0; i--) {
 							eval('gd.' + nameB + '[i].nums = 0');
 						}
-						for (var i = PartyB.length - 1; i >= 0; i--) {
+						for (var i = PartyA.length - 1; i >= 0; i--) {
 							eval('gd.' + nameA + '[i].nums = 0');
 						}
 						return 'draw';
 					}
 
-					// console.info(gd.armysList[0].nums)
 					for (var i = PartyA.length - 1; i >= 0; i--) {
-						// PartyA[i].nums = 0;
-						eval('gd.' + nameB + '[i].num = 0');
+						eval('gd.' + nameA + '[i].nums = parseInt(armorA) / PartyA.length / parseInt(gd.' + nameA + '[i].armor)');
 					}
 					for (var i = PartyB.length - 1; i >= 0; i--) {
-						// PartyB[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(PartyB[i].armor));
-						eval('gd.' + nameA + '[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(' + nameA + '[i].armor))');
+						eval('gd.' + nameB + '[i].nums = 0');
 					}
 					return 'win';
 				}
@@ -430,8 +427,8 @@ game = new Vue({
 			if (!localStorage.nickname) {
 				this.initGame();
 			}
-			if (gd.ver != '0.03v') {
-				this.alertInfo('您是旧存档，请点击 存档更新');
+			if (gd.ver != ver) {
+				this.alertInfo('您是旧存档，请点击 存档更新！');
 			}
 			setInterval(function () {game.saveGame()}, 3000);
 		})
