@@ -209,17 +209,10 @@ game = new Vue({
 			}
 		},
 // 增加消息
-		addComment: function(comment) {
+		addComment: function(_comment) {
 			var myDate = new Date();
-			gd.commentList[gd.commentId.use].comment = comment + ' (' + myDate.getHours() + '小时' + myDate.getMinutes() + '分 ' + myDate.getSeconds() + '秒)';
-			if (gd.commentId.use == gd.commentId.limit) {
-				gd.commentId.use = 0;
-			} else {
-				gd.commentId.use++;
-			}
-			for (var i = gd.commentList.length - 1; i >= 0; i--) {
-				gd.commentList[i];
-			}
+			gd.commentList.unshift ( { comment : _comment + ' (' + myDate.getHours() + '小时' + myDate.getMinutes() + '分 ' + myDate.getSeconds() + '秒)' } );
+			gd.commentList.pop();
 		},
 // 战斗算法
 		fight: function(PartyA, PartyB, nameA, nameB) { // A为己方
