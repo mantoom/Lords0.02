@@ -31,7 +31,7 @@
 			<ul class="uk-list uk-list-line">
 				<li title="名称、面积等信息~">领地：{{nickname}}</li>
 				<li title="基础货币">古罗马币：{{money | intercept2}}（每秒收集{{ | moneyProduce}}枚）</li>
-				<li title="领地可负责工作的平民">居民：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲）</li>
+				<li title="领地可负责工作的平民">居民人数：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲，领地能容纳{{peopleLimit}}人）</li>
 			</ul>
 		</div>
 

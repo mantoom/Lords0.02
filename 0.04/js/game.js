@@ -15,11 +15,10 @@ Vue.filter('moneyProduce', function (value) {
 	return Number(getMoney).toFixed('2')
 })
 
-// var initBuild = 4;
-var initBuild = 2;
+var initBuild = 4;
 var initArmy = 2;
 var initBandit = 3;
-var ver = '0.03(001)';
+var ver = '0.04(002)';
 
 if (localStorage.nickname) {
 	var gd = {
@@ -33,24 +32,25 @@ if (localStorage.nickname) {
 		tax: localStorage.tax,
 		peopleHave: localStorage.peopleHave,
 		peopleIdle: localStorage.peopleIdle,
+		peopleLimit: localStorage.peopleLimit,
 		menace: localStorage.menace,
 		// 建筑信息
 		buildsList: [
-			{ id: 0, name: '练兵场', introduce: '训练军队', money: 100, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
-			{ id: 1, name: '农贸集市', introduce: '居民买卖粮食和生活必需品的场所，可以收取少量的税金，未来，这里将成为食品贸易集散地。', money: 85, effects: [{ name: 'tax', effect: 3.2}], worker: 8, nums: localStorage.build1 },
-			// { id: 2, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 175, effects: [{ name: 'money', effect: 0}], worker: 4, nums: localStorage.build2 },
-			// { id: 3, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 175, effects: [{ name: 'money', effect: 0}], worker: 4, nums: localStorage.build3 },
+			{ id: 0, name: '练兵场', introduce: '训练战士、驻扎军队、必要时保卫城镇的军人聚集之所。', money: 100, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
+			{ id: 1, name: '农贸集市', introduce: '居民买卖粮食和生活必需品的场所，可以收取少量的税金，未来，这里将成为食品贸易集散地。', money: 185, effects: [{ name: 'tax', effect: 3.2}], worker: 8, nums: localStorage.build1 },
+			{ id: 2, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 40, effects: [{ name: 'tax', effect: 0.7}], worker: 4, nums: localStorage.build2 },
+			{ id: 3, name: '民居', introduce: '可以容纳一家七口人居住，尽管拥挤，却是冬天来临时，可以保命的庇护之所。', money: 35, effects: [{ name: 'peopleLimit', effect: 7}], worker: 0, nums: localStorage.build3 },
 		],
 		// 军队信息
 		armysList: [
-			{ id: 0, name: '民兵', introduce: 'Introduce', money: 50, worker: 1, harm: 7, armor: 40, nums: localStorage.army0 },
-			{ id: 1, name: '征召兵', introduce: 'Introduce', money: 125, worker: 1, harm: 11, armor: 50, nums: localStorage.army1 },
+			{ id: 0, name: '民兵', introduce: '村镇招募的普通农民，无论是王国还是帝国，为了防备强盗土匪的劫掠，每年秋收之前，都会进行秋季拉练。', money: 50, worker: 1, harm: 7, armor: 4, morale: 3, nums: localStorage.army0 },
+			{ id: 1, name: '征召兵', introduce: '紧急时期招募的普通人，经过简单有效的军事训练，尽管如此，在正式编制的军人之中，依然属于菜鸡水平。', money: 85, worker: 1, harm: 11, armor: 5, morale: 4, nums: localStorage.army1 },
 		],
 		// 强盗信息
 		banditsList: [
-			{id: 0, name: '流氓', harm: 6, armor: 40, nums: localStorage.bandit0 },
-			{id: 1, name: '强盗', harm: 10, armor: 80, nums: localStorage.bandit1 },
-			{id: 2, name: '强盗头目', harm: 20, armor: 100, nums: localStorage.bandit2 },
+			{id: 0, name: '流氓', harm: 6, armor: 4, morale: 2, nums: localStorage.bandit0 },
+			{id: 1, name: '强盗', harm: 10, armor: 8, morale: 3, nums: localStorage.bandit1 },
+			{id: 2, name: '强盗头目', harm: 20, armor: 10, morale: 4, nums: localStorage.bandit2 },
 		],
 		commentId : {limit: 7, use: 0},
 		commentList: [
@@ -114,57 +114,73 @@ game = new Vue({
 
 			gd.money = Number(gd.money) + (Number(gd.peopleHave) * (0.01 / x));
 
-			if (Math.random() < (0.02 / x)) {
-				gd.peopleHave = Number(gd.peopleHave) + 1;
-				gd.peopleIdle = Number(gd.peopleIdle) + 1;
-
+			// 流民加入
+			peopleFactor = (parseInt(gd.peopleHave) > 70) ? 0.02 : Number(0.7 - parseInt(gd.peopleHave) * 0.01) + 0.02;
+			if (Math.random() < peopleFactor) {
+				console.info(peopleFactor + 's1')
+				console.info(parseInt(gd.peopleLimit) + 's2')
 				var randnum = Math.random();
-				if (randnum > 0.07 && randnum < 0.17) { // 0.10
-					gd.banditsList[0].nums = parseInt(gd.banditsList[0].nums) + 1;
-				} else if (randnum > 0.03 && randnum < 0.07) { // 0.04
-					gd.banditsList[1].nums = parseInt(gd.banditsList[1].nums) + 1;
-				} else if (randnum < 0.03) { // 0.03
-					gd.banditsList[2].nums = parseInt(gd.banditsList[2].nums) + 1;
+				if (parseInt(gd.peopleLimit) > parseInt(gd.peopleHave)) {
+					console.info(parseInt(gd.peopleLimit) + 's3')
+					gd.peopleHave = Number(gd.peopleHave) + 1;
+					gd.peopleIdle = Number(gd.peopleIdle) + 1;
+					if (randnum < 0.2) {
+						this.addComment('流民：这个城市或许不错，我是否应该留下来呢？');
+					} else if (randnum < 0.35 && randnum > 0.2) {
+						this.addComment('流民：喔，人们挺和善的，先在这里歇歇脚吧。');
+					}
+				} else {
+					console.info(parseInt(gd.peopleLimit) + 's7')
+					if (randnum < 0.25) this.addComment('流民：这里似乎没有我的容身之处，唉……');
 				}
 
-				if (randnum < 0.2) {
-					this.addComment('这个城市或许不错，我是否应该留下来呢？');
-				} else if (randnum < 0.25) {
-					this.addComment('先在这里歇歇脚吧……');
-				}
 				console.info('Vagrant Join');
+			}
+
+			// 强盗加入
+			var randnum = Math.random();
+			if (randnum > 0.05 && randnum < 0.15) { // 0.10
+				gd.banditsList[0].nums = parseInt(gd.banditsList[0].nums) + 1;
+			} else if (randnum > 0.015 && randnum < 0.05) { // 0.035
+				gd.banditsList[1].nums = parseInt(gd.banditsList[1].nums) + 1;
+			} else if (randnum < 0.015) { // 0.015
+				gd.banditsList[2].nums = parseInt(gd.banditsList[2].nums) + 1;
 			}
 
 			// 人口繁衍
 			gd.peopleHave = Number((Number(gd.peopleHave) / 2) * 0.0033 + Number(gd.peopleHave)).toFixed('2');
 			gd.peopleIdle = Number((Number(gd.peopleHave) / 2) * 0.0033 + Number(gd.peopleIdle)).toFixed('2');
-			if (Math.random() < 0.1 && Number(gd.peopleHave) > 600) {
-				this.addComment('新生儿！领地的新希望！')
+			var randnum = Math.random();
+			if (randnum < 0.2 && Number(gd.peopleHave) > 100) {
+				if (parseInt(gd.peopleLimit) > parseInt(gd.peopleHave)) {
+					this.addComment('接生婆：新生儿！领地的新希望！');
+				} else {
+					this.addComment('接生婆：不幸的新生儿。大人，我们的房屋不够用，在冬天，这些孩子有可能会被冻死，恳求您多造几间屋子吧。');
+				}
 			}
-
 			// 税收
 			gd.money = Number(gd.tax) / monthDay / x + Number(gd.money);
-
+			// 强盗
 			this.banditFight();
 
-			localStorage.ver = gd.ver
-			localStorage.cityValue = gd.cityValue
-			localStorage.money = gd.money
-			localStorage.tax = gd.tax
-			localStorage.peopleHave = gd.peopleHave
-			localStorage.peopleIdle = gd.peopleIdle
-			localStorage.menace = gd.menace
+			localStorage.ver = gd.ver;
+			localStorage.cityValue = gd.cityValue;
+			localStorage.money = gd.money;
+			localStorage.tax = gd.tax;
+			localStorage.peopleHave = gd.peopleHave;
+			localStorage.peopleIdle = gd.peopleIdle;
+			localStorage.peopleLimit = gd.peopleLimit;
+			localStorage.menace = gd.menace;
 
 			for (var i = initBuild - 1; i >= 0; i--) {
-				eval('localStorage.build' + i + ' = gd.buildsList[' + i + '].nums')
+				eval('localStorage.build' + i + ' = gd.buildsList[' + i + '].nums');
 			}
 			for (var i = initArmy - 1; i >= 0; i--) {
-				eval('localStorage.army' + i + ' = gd.armysList[' + i + '].nums')
+				eval('localStorage.army' + i + ' = gd.armysList[' + i + '].nums');
 			}
 			for (var i = initBandit - 1; i >= 0; i--) {
-				eval('localStorage.bandit' + i + ' = gd.banditsList[' + i + '].nums')
+				eval('localStorage.bandit' + i + ' = gd.banditsList[' + i + '].nums');
 			}
-			console.info('Save Success!')
 		},
 // 初始存档
 		initGame: function() {
@@ -173,8 +189,9 @@ game = new Vue({
 			localStorage.ver = ver;
 			localStorage.cityValue = 0;
 			localStorage.money = 100;
-			localStorage.peopleHave = 0;
-			localStorage.peopleIdle = 0;
+			localStorage.peopleHave = 7;
+			localStorage.peopleIdle = 7;
+			localStorage.peopleLimit = 20;
 			localStorage.menace = 'null';
 			localStorage.tax = 0;
 
@@ -191,17 +208,16 @@ game = new Vue({
 		},
 // 更新存档
 		updateSave: function() {
-			if (gd.ver == '0.02v') {
-				localStorage.tax = 0;
+			if (gd.ver != ver) {
+				var build;
+				build[0] = localStorage.build0;
+				build[1] = localStorage.build1;
 				for (var i = initBuild - 1; i >= 0; i--) {
 					eval('localStorage.build' + i + ' = 0');
 				}
-				for (var i = initArmy - 1; i >= 0; i--) {
-					eval('localStorage.army' + i + ' = 0');
-				}
-				for (var i = initBandit - 1; i >= 0; i--) {
-					eval('localStorage.bandit' + i + ' = 0');
-				}
+				localStorage.build0 = build[0];
+				localStorage.build1 = build[1];
+				localStorage.peopleLimit = 20;
 				localStorage.ver = ver;
 				window.location.reload();
 			} else {
@@ -211,7 +227,8 @@ game = new Vue({
 // 增加消息
 		addComment: function(_comment) {
 			var myDate = new Date();
-			gd.commentList.unshift ( { comment : _comment + ' (' + myDate.getHours() + '小时' + myDate.getMinutes() + '分 ' + myDate.getSeconds() + '秒)' } );
+			var mymonth=myDate.getMonth()+1;
+			gd.commentList.unshift ( { comment : _comment + '('+myDate.getFullYear()+'-'+mymonth+'-'+myDate.getDate()+' '+myDate.getHours()+':'+myDate.getMinutes()+':'+myDate.getSeconds()+')'} );
 			gd.commentList.pop();
 		},
 // 战斗算法
@@ -219,15 +236,26 @@ game = new Vue({
 			// 计算双方军队数值
 			var harmA = 0;
 			var armorA = 0;
-			for (var i = PartyA.length - 1; i >= 0; i--) {
-				harmA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].harm) + parseInt(harmA);
-				armorA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].armor) + parseInt(armorA);
-			}
+			var allArmyA = 0;
+			var allMoraleA = 0;
+
 			var harmB = 0;
 			var armorB = 0;
+			var allArmyB = 0;
+			var allMoraleB = 0;
+
+			var killFactor = 0.015;
+
+			// 计算军队实力
+			for (var i = PartyA.length - 1; i >= 0; i--) {
+				harmA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].harm) + harmA;
+				armorA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].armor) + armorA;
+				allMoraleA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].morale) + armorA;
+			}
 			for (var i = PartyB.length - 1; i >= 0; i--) {
-				harmB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].harm) + parseInt(harmB);
-				armorB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].armor) + parseInt(armorB);
+				harmB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].harm) + harmB;
+				armorB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].armor) + armorB;
+				allMoraleB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].morale) + moraleB;
 			}
 			// 判断双方军队的伤害是否空，如果为空，就算有军队，也无法获得胜利
 			if (parseInt(harmA) < 1) {
@@ -237,11 +265,55 @@ game = new Vue({
 				if (parseInt(harmA) < 1) {return 'draw';}
 				return 'win';
 			} else {
-				while (parseInt(armorA) > 0 && parseInt(armorB) > 0) { // 判断生命是否空
-					// 互相伤害
-					console.info('战斗中：A方伤害：'+harmA+';A方生命：'+armorA+';B方伤害：'+harmB+';B方生命：'+armorB);
-					armorA = parseInt(armorA) - parseInt(harmB);
-					armorB = parseInt(armorB) - parseInt(harmA);
+				while (harmA < 1 || harmB < 1) {
+					// 军队数量
+					for (var i = PartyA.length - 1; i >= 0; i--) {
+						allArmyA += parseInt(PartyA[i].nums);
+					}
+					for (var i = PartyB.length - 1; i >= 0; i--) {
+						allArmyB += parseInt(PartyB[i].nums);
+					}
+
+					// 互相伤害，计算伤亡
+					var deathB = parseInt((harmA - armorB) * killFactor);
+					var deathA = parseInt((harmB - armorA) * killFactor);
+					var deathFactorA = allArmyA / deathA;
+					var deathFactorB = allArmyB / deathA;
+
+					for (var i = PartyA.length - 1; i >= 0; i--) {
+						PartyA[i].nums = parseInt(PartyA[i].nums) - parseInt(PartyA[i].nums) * deathFactorA;
+					}
+					for (var i = PartyB.length - 1; i >= 0; i--) {
+						PartyB[i].nums = parseInt(PartyB[i].nums) - parseInt(PartyB[i].nums) * deathFactorB;
+					}
+
+					// 重算军队实力
+					var harmA = 0;
+					var armorA = 0;
+					var moraleA = 0;
+					var harmB = 0;
+					var armorB = 0;
+					var moraleB = 0;
+// 部队士气总和=Σ（兵种数量x兵种士气）
+// 当现有总士气占幸存士兵总士气的25%时，触发溃逃，溃逃后幸存部队的1/3将返回领地。
+					for (var i = PartyA.length - 1; i >= 0; i--) {
+						harmA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].harm) + harmA;
+						armorA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].armor) + armorA;
+						moraleA = parseInt(PartyA[i].nums) * parseInt(PartyA[i].morale) + armorA;
+					}
+					for (var i = PartyB.length - 1; i >= 0; i--) {
+						harmB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].harm) + harmB;
+						armorB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].armor) + armorB;
+						moraleB = parseInt(PartyB[i].nums) * parseInt(PartyB[i].morale) + moraleB;
+					}
+					if ((moraleA / allMoraleA) < 0.25) {	// 军队溃散，失去战斗力
+						armorA = 0;
+						break;
+					}
+					if ((moraleB / allMoraleB) < 0.25) {
+						armorB = 0;
+						break;
+					}
 				}
 				// 战斗结束，返回残局军队数据
 				if (parseInt(armorA) < 1) {
@@ -259,7 +331,7 @@ game = new Vue({
 						eval('gd.' + nameA + '[i].nums = 0');
 					}
 					for (var i = PartyB.length - 1; i >= 0; i--) {
-						eval('gd.' + nameB + '[i].nums = parseInt(parseInt(armorB) / PartyB.length / parseInt(gd.' + nameB + '[i].armor))');
+						eval('gd.' + nameB + '[i].nums = parseInt(PartyB[i].nums)');
 					}
 					return 'lost';
 				} else if (parseInt(armorB) < 1) {
@@ -274,7 +346,7 @@ game = new Vue({
 					}
 
 					for (var i = PartyA.length - 1; i >= 0; i--) {
-						eval('gd.' + nameA + '[i].nums = parseInt(armorA) / PartyA.length / parseInt(gd.' + nameA + '[i].armor)');
+						eval('gd.' + nameA + '[i].nums = parseInt(PartyA[i].nums)');
 					}
 					for (var i = PartyB.length - 1; i >= 0; i--) {
 						eval('gd.' + nameB + '[i].nums = 0');
