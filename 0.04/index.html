@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<title>领主</title>
+	<link rel="stylesheet" href="css/base.css">
+	<link href="http://cdn.bootcss.com/uikit/2.27.1/css/uikit.min.css" rel="stylesheet">
+	<link href="http://cdn.bootcss.com/uikit/2.27.1/css/components/notify.css" rel="stylesheet">
+</head>
+<body>
+<div id="game" class="uk-grid" data-uk-margin>
+	<div id="introduces" class="uk-modal">
+		<div class="uk-modal-dialog">
+			<a class="uk-modal-close uk-close"></a>
+			<span v-html="introduces"></span>
+		</div>
+	</div>
+
+	<div class="uk-width-1-1">
+		<div class="uk-panel-box uk-container-center uk-panel-box-secondary">
+			<h1 class="uk-text-center" title="Lords">领主</h1>
+			<button class="uk-button uk-button-primary" @click="updateSave()">存档更新</button>
+			<button class="uk-button uk-button-primary" @click="initGame()">存档重置</button>
+			<a class="uk-button uk-button-primary" href="guide.html" target="_blank">新手指南</a>
+		</div>
+	</div>
+
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">领地信息</div>
+			<ul class="uk-list uk-list-line">
+				<li title="名称、面积等信息~">领地：{{nickname}}</li>
+				<li title="基础货币">古罗马币：{{money | intercept2}}（每秒收集{{ | moneyProduce}}枚）</li>
+				<li title="领地可负责工作的平民">居民人数：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲，领地能容纳{{peopleLimit}}人）</li>
+			</ul>
+		</div>
+
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">领地外围</div>
+			<span title="侦查得到的结果，危险度过高会触发强盗入侵">危险度</span>：
+			<span class="uk-text-muted" v-if="menace=='null'">未知</span>
+			<span class="uk-text-success" v-if="menace=='safe'">安全</span>
+			<span class="uk-text-warning" v-if="menace=='unstable'">不安</span>
+			<span class="uk-text-warning" v-if="menace=='complaint'">敌视</span>
+			<span class="uk-text-danger" v-if="menace=='enmity'">恨意</span>
+			<span class="uk-text-danger" v-if="menace=='hatred'">血仇</span>
+			<small>(侦查消耗10罗马币)</small>
+			<button class="uk-button uk-button-danger uk-float-right uk-margin-small-left" title="对城市外围进行扫荡，降低危险度" @click="surroundingSweep">扫荡</button>
+			<button class="uk-button uk-button-primary uk-float-right" title="花费10古罗马币来换取外围情报" @click="surroundingProbe">侦查</button>
+		</div>
+		
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">消息框</div>
+			<div class="bor" v-for="list in commentList">
+				<div class="comment">{{list.comment}}</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="uk-width-1-2">
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">建筑列表</div>
+			<table class="uk-table uk-table-striped">
+				<thead>
+					<tr>
+						<th>建筑</th>
+						<th>成本</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="list in buildsList">
+						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" @click="introduce(list.introduce)">{{list.name}}</button></td>
+						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
+						<td>{{list.nums}}</td>
+						<td><button class="uk-button" @click="plusBuilds(list.id)">建造</button><button class="uk-button" @click="reduceBuilds(list.id)">拆迁</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+			<div class="uk-panel-title">军队列表</div>
+			<table class="uk-table uk-table-striped">
+				<thead>
+					<tr>
+						<th>军种</th>
+						<th>成本</th>
+						<th>伤害</th>
+						<th>护甲</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="list in armysList">
+						<td><button class="uk-button" data-uk-modal="{target:'#introduces'}" @click="introduce(list.introduce)">{{list.name}}</button></td>
+						<td>￥{{list.money}} / 居民*{{list.worker}}</td>
+						<td>{{list.harm}}</td>
+						<td>{{list.armor}}</td>
+						<td>{{list.nums}}</td>
+						<td><button class="uk-button" @click="plusArmys(list.id)">训练</button><button class="uk-button" @click="reduceArmys(list.id)">遣散</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.js"></script>
+	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/uikit.min.js"></script>
+	<script src="http://cdn.bootcss.com/uikit/2.27.1/js/components/notify.js"></script>
+	<script src="js/game.js"></script>
+</body>
+</html>
