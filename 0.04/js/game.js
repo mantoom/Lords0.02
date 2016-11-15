@@ -18,6 +18,8 @@ Vue.filter('moneyProduce', function (value) {
 var initBuild = 4;
 var initArmy = 2;
 var initBandit = 3;
+var buildRate = 1;
+var armyRate = 1;
 var ver = '0.04(002)';
 
 if (localStorage.nickname) {
@@ -369,58 +371,79 @@ game = new Vue({
 		introduce: function(introduce) {
 			gd.introduces = introduce;
 		},
-// 建造建筑
-		plusBuilds: function(id) {
-			if (Number(gd.money) < Number(gd.buildsList[id].money)) {
-				this.alertInfo('古罗马币不足')
-			} else if (Number(gd.peopleIdle) < Number(gd.buildsList[id].worker)) {
-				this.alertInfo('居民不足')
-			} else {
-				gd.money  = Number(gd.money) - Number(gd.buildsList[id].money)	// 扣资源
-				gd.peopleIdle = Number(gd.peopleIdle)  - Number(gd.buildsList[id].worker)	// 调派工人
-				gd.buildsList[id].nums = Number(gd.buildsList[id].nums) + 1	// 加数量
-				for (var i = gd.buildsList[id].effects.length - 1; i >= 0; i--) {
-					eval('gd.' + gd.buildsList[id].effects[i].name + ' = Number(gd.' + gd.buildsList[id].effects[i].name + ') + Number(gd.buildsList[id].effects[i].effect)')
-				}
-			}
-		},
-// 拆除建筑
-		reduceBuilds: function(id) {
-			if (parseInt(gd.buildsList[id].nums) < 1) {
-				this.alertInfo('建筑不足')
-			} else {
-				gd.money  = Number(gd.money) + (Number(gd.buildsList[id].money) * 0.3)	// 反馈资源
-				gd.peopleIdle = Number(gd.peopleIdle)  + Number(gd.buildsList[id].worker)	// 遣散工人
-				gd.buildsList[id].nums = parseInt(gd.buildsList[id].nums) - 1	// 减数量
-				for (var i = gd.buildsList[id].effects.length - 1; i >= 0; i--) {
-					eval('gd.' + gd.buildsList[id].effects[i].name + ' = Number(gd.' + gd.buildsList[id].effects[i].name + ') - Number(gd.buildsList[id].effects[i].effect)')
-				}
-			}
-		},
-// 训练军队
-		plusArmys: function(id) {
-			if (parseInt(gd.buildsList[0].nums) < 1) {
-				this.alertInfo('您并没有兴建练兵场')
-			} else if (parseInt(gd.peopleIdle) < Number(gd.armysList[id].worker)) {
-				this.alertInfo('居民不足')
-			} else if (Number(gd.money) < Number(gd.armysList[id].money)) {
-				this.alertInfo('古罗马币不足')
-			} else {
-				gd.money  = Number(gd.money) - Number(gd.armysList[id].money)	// 扣资源
-				gd.peopleIdle = Number(gd.peopleIdle)  - Number(gd.armysList[id].worker)	// 调派工人
-				gd.armysList[id].nums = Number(gd.armysList[id].nums) + 1	// 加数量
-			}
-		},
-// 遣散军队
-		reduceArmys: function(id) {
-			if (parseInt(gd.armysList[id].nums) < 1) {
-				this.alertInfo('士兵不足')
-			} else {
-				gd.money  = Number(gd.money) - (Number(gd.armysList[id].money) * 0.3)	// 遣散费
-				gd.peopleIdle = Number(gd.peopleIdle)  + Number(gd.armysList[id].worker)	// 遣散工人
-				gd.armysList[id].nums = parseInt(gd.armysList[id].nums) - 1	// 减数量
-			}
-		},
+		//设置倍数
+				setRate: function(rate,n){
+					if (!n) {
+						n = prompt("请输入你要建造的数量")
+						$(event.currentTarget).text(n)
+					};
+					eval( rate+' = '+n);
+					console.info(n)
+				},
+		// 建造建筑
+				plusBuilds: function(id) {
+					buildMoneyDemand = Number(gd.buildsList[id].money) * buildRate;
+					buildWorkerDemand = Number(gd.buildsList[id].worker) * buildRate;
+					if (Number(gd.money) < buildMoneyDemand) {
+						this.alertInfo('古罗马币不足')
+					} else if (Number(gd.peopleIdle) < buildWorkerDemand) {
+						this.alertInfo('居民不足')
+					} else {
+						gd.money  = Number(gd.money) - buildMoneyDemand	// 扣资源
+						gd.peopleIdle = Number(gd.peopleIdle)  - buildWorkerDemand	// 调派工人
+						gd.buildsList[id].nums = Number(gd.buildsList[id].nums) + buildRate	// 加数量
+						for (var j = 0 ;j <= buildRate; j++){
+							for (var i = gd.buildsList[id].effects.length - 1; i >= 0; i--) {
+								eval('gd.' + gd.buildsList[id].effects[i].name + ' = Number(gd.' + gd.buildsList[id].effects[i].name + ') + Number(gd.buildsList[id].effects[i].effect)')
+							}
+						}
+					}
+				},
+		// 拆除建筑
+				reduceBuilds: function(id) {
+					buildMoneyDemand = Number(gd.buildsList[id].money) * buildRate;
+					buildWorkerDemand = Number(gd.buildsList[id].worker) * buildRate;
+					if (parseInt(gd.buildsList[id].nums)-buildRate < 0) {
+						this.alertInfo('建筑不足')
+					} else {
+						gd.money  = Number(gd.money) + (buildMoneyDemand * 0.3)	// 反馈资源
+						gd.peopleIdle = Number(gd.peopleIdle)  + buildWorkerDemand	// 遣散工人
+						gd.buildsList[id].nums = parseInt(gd.buildsList[id].nums) - buildRate	// 减数量
+						for (var j = 0 ;j <= buildRate; j++){
+							for (var i = gd.buildsList[id].effects.length - 1; i >= 0; i--) {
+								eval('gd.' + gd.buildsList[id].effects[i].name + ' = Number(gd.' + gd.buildsList[id].effects[i].name + ') - Number(gd.buildsList[id].effects[i].effect)')
+							}
+						}
+					}
+				},
+		// 训练军队
+				plusArmys: function(id) {
+					armyMoneyDemand = Number(gd.armysList[id].money) * armyRate;
+					armyWorkerDemand = Number(gd.armysList[id].worker) * armyRate;
+					if (parseInt(gd.buildsList[0].nums) < 1) {
+						this.alertInfo('您并没有兴建练兵场')
+					} else if (parseInt(gd.peopleIdle) < armyWorkerDemand) {
+						this.alertInfo('居民不足')
+					} else if (Number(gd.money) < armyMoneyDemand) {
+						this.alertInfo('古罗马币不足')
+					} else {
+						gd.money  = Number(gd.money) - armyMoneyDemand	// 扣资源
+						gd.peopleIdle = Number(gd.peopleIdle)  - armyWorkerDemand	// 调派工人
+						gd.armysList[id].nums = Number(gd.armysList[id].nums) + armyRate	// 加数量
+					}
+				},
+		// 遣散军队
+				reduceArmys: function(id) {
+					armyMoneyDemand = Number(gd.armysList[id].money) * armyRate;
+					armyWorkerDemand = Number(gd.armysList[id].worker) * armyRate;
+					if (parseInt(gd.armysList[id].nums)-armyRate < 0) {
+						this.alertInfo('士兵不足')
+					} else {
+						gd.money  = Number(gd.money) - (armyMoneyDemand * 0.3)	// 遣散费
+						gd.peopleIdle = Number(gd.peopleIdle)  + armyWorkerDemand	// 遣散工人
+						gd.armysList[id].nums = parseInt(gd.armysList[id].nums) - armyRate	// 减数量
+					}
+				},
 // 侦查强盗
 		surroundingProbe: function() {
 			if (parseInt(gd.money) < 10) {

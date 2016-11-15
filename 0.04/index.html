@@ -31,7 +31,7 @@
 			<ul class="uk-list uk-list-line">
 				<li title="名称、面积等信息~">领地：{{nickname}}</li>
 				<li title="基础货币">古罗马币：{{money | intercept2}}（每秒收集{{ | moneyProduce}}枚）</li>
-				<li title="领地可负责工作的平民">居民人数：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲，领地能容纳{{peopleLimit}}人）</li>
+				<li title="领地可负责工作的平民">居民：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲）</li>
 			</ul>
 		</div>
 
@@ -48,8 +48,8 @@
 			<button class="uk-button uk-button-danger uk-float-right uk-margin-small-left" title="对城市外围进行扫荡，降低危险度" @click="surroundingSweep">扫荡</button>
 			<button class="uk-button uk-button-primary uk-float-right" title="花费10古罗马币来换取外围情报" @click="surroundingProbe">侦查</button>
 		</div>
-		
-		<div class="uk-panel uk-panel-box uk-panel-box-primary">
+
+		<div class="uk-panel uk-panel-box uk-panel-box-primary commentList">
 			<div class="uk-panel-title">消息框</div>
 			<div class="bor" v-for="list in commentList">
 				<div class="comment">{{list.comment}}</div>
@@ -59,7 +59,15 @@
 
 	<div class="uk-width-1-2">
 		<div class="uk-panel uk-panel-box uk-panel-box-primary">
-			<div class="uk-panel-title">建筑列表</div>
+			<div class="uk-panel-title">建筑列表
+				<div class="uk-button-group uk-float-right" data-uk-button-radio>
+					<button class="uk-button uk-button-primary" @click="setRate('buildRate',1)" type="button">1</button>
+					<button class="uk-button uk-button-primary" @click="setRate('buildRate',10)" type="button">10</button>
+					<button class="uk-button uk-button-primary" @click="setRate('buildRate',100)" type="button">100</button>
+					<button class="uk-button uk-button-primary" @click="setRate('buildRate',0)" type="button" disabled>max</button>
+					<button id="bdf" class="uk-button uk-button-primary" @click="setRate('buildRate',0)" type="button">自定</button>
+				</div>
+			</div>
 			<table class="uk-table uk-table-striped">
 				<thead>
 					<tr>
@@ -81,7 +89,15 @@
 		</div>
 
 		<div class="uk-panel uk-panel-box uk-panel-box-primary">
-			<div class="uk-panel-title">军队列表</div>
+			<div class="uk-panel-title">军队列表
+				<div class="uk-button-group uk-float-right" data-uk-button-radio>
+					<button class="uk-button uk-button-primary" @click="setRate('armyRate',1)" type="button">1</button>
+					<button class="uk-button uk-button-primary" @click="setRate('armyRate',10)" type="button">10</button>
+					<button class="uk-button uk-button-primary" @click="setRate('armyRate',100)" type="button">100</button>
+					<button class="uk-button uk-button-primary" @click="setRate('armyRate',0)" type="button" disabled>max</button>
+					<button id="adf" class="uk-button uk-button-primary" @click="setRate('armyRate',0)" type="button">自定</button>
+				</div>
+		</div>
 			<table class="uk-table uk-table-striped">
 				<thead>
 					<tr>
