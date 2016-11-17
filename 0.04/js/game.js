@@ -14,6 +14,7 @@ Vue.filter('moneyProduce', function (value) {
 	}
 	return Number(getMoney).toFixed('2')
 })
+Vue.filter('')
 
 var initBuild = 4;
 var initArmy = 2;
@@ -39,8 +40,8 @@ if (localStorage.nickname) {
 		// 建筑信息
 		buildsList: [
 			{ id: 0, name: '练兵场', introduce: '训练战士、驻扎军队、必要时保卫城镇的军人聚集之所。', money: 100, effects: [{ name: 'peopleHave', effect: 0}], worker: 22, nums: localStorage.build0 },
-			{ id: 1, name: '农贸集市', introduce: '居民买卖粮食和生活必需品的场所，可以收取少量的税金，未来，这里将成为食品贸易集散地。', money: 185, effects: [{ name: 'tax', effect: 3.2}], worker: 8, nums: localStorage.build1 },
-			{ id: 2, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 40, effects: [{ name: 'tax', effect: 0.7}], worker: 4, nums: localStorage.build2 },
+			{ id: 1, name: '农贸集市', introduce: '居民买卖粮食和生活必需品的场所，可以收取少量的税金，未来，这里将成为食品贸易集散地。', money: 155, effects: [{ name: 'tax', effect: 3.2}], worker: 8, nums: localStorage.build1 },
+			{ id: 2, name: '农田', introduce: '佃农们耕种着领主的田地，每年收获后，从收获的粮食中，拿取自己的那份，以维持全家的温饱。(Via 土豆爸爸)', money: 40, effects: [{ name: 'tax', effect: 0.7}], worker: 2, nums: localStorage.build2 },
 			{ id: 3, name: '民居', introduce: '可以容纳一家七口人居住，尽管拥挤，却是冬天来临时，可以保命的庇护之所。', money: 35, effects: [{ name: 'peopleLimit', effect: 7}], worker: 0, nums: localStorage.build3 },
 		],
 		// 军队信息
@@ -67,7 +68,6 @@ if (localStorage.nickname) {
 		],
 	}
 }
-
 
 game = new Vue({
 	el: '#game',
@@ -211,14 +211,15 @@ game = new Vue({
 // 更新存档
 		updateSave: function() {
 			if (gd.ver != ver) {
-				var build;
-				build[0] = localStorage.build0;
-				build[1] = localStorage.build1;
+				// 
+			} else if (gd.ver != '0.04(002)') {
+				build0 = localStorage.build0;
+				build1 = localStorage.build1;
 				for (var i = initBuild - 1; i >= 0; i--) {
 					eval('localStorage.build' + i + ' = 0');
 				}
-				localStorage.build0 = build[0];
-				localStorage.build1 = build[1];
+				localStorage.build0 = build0;
+				localStorage.build1 = build1;
 				localStorage.peopleLimit = 20;
 				localStorage.ver = ver;
 				window.location.reload();

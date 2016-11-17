@@ -9,13 +9,6 @@
 </head>
 <body>
 <div id="game" class="uk-grid" data-uk-margin>
-	<div id="introduces" class="uk-modal">
-		<div class="uk-modal-dialog">
-			<a class="uk-modal-close uk-close"></a>
-			<span v-html="introduces"></span>
-		</div>
-	</div>
-
 	<div class="uk-width-1-1">
 		<div class="uk-panel-box uk-container-center uk-panel-box-secondary">
 			<h1 class="uk-text-center" title="Lords">领主</h1>
@@ -25,13 +18,30 @@
 		</div>
 	</div>
 
+<!-- 	<div id="lord" class="uk-modal">
+		<div class="uk-modal-dialog">
+			<a class="uk-modal-close uk-close"></a>
+			<span>时间：</span><br>
+			<span>新生儿/年：{{}}</span><br>
+			<span>农贸集市：</span><br>
+			<span>农田：</span>
+		</div>
+	</div> -->
+
 	<div class="uk-width-1-2">
 		<div class="uk-panel uk-panel-box uk-panel-box-primary">
-			<div class="uk-panel-title">领地信息</div>
+			<div class="uk-panel-title">
+				领地信息
+				<button class="uk-button uk-button-link uk-button-mini" data-uk-modal="{target:'#lord'}"  title="获取关于领地的详细信息">详细</button>
+			</div>
 			<ul class="uk-list uk-list-line">
 				<li title="名称、面积等信息~">领地：{{nickname}}</li>
 				<li title="基础货币">古罗马币：{{money | intercept2}}（每秒收集{{ | moneyProduce}}枚）</li>
+<<<<<<< HEAD
 				<li title="领地可负责工作的平民">居民：{{peopleHave | intercept0}}（{{peopleIdle | intercept0}}人处于空闲）</li>
+=======
+				<li title="领地可负责工作的平民">居民人数：{{peopleHave | intercept0}}（空闲：{{peopleIdle | intercept0}} 人，可容纳：{{peopleLimit}} 人）</li>
+>>>>>>> Sun-FreePort/master
 			</ul>
 		</div>
 
@@ -54,6 +64,13 @@
 			<div class="bor" v-for="list in commentList">
 				<div class="comment">{{list.comment}}</div>
 			</div>
+		</div>
+	</div>
+
+	<div id="introduces" class="uk-modal">
+		<div class="uk-modal-dialog">
+			<a class="uk-modal-close uk-close"></a>
+			<span v-html="introduces"></span>
 		</div>
 	</div>
 
